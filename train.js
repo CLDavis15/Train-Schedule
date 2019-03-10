@@ -20,38 +20,87 @@ var time = "";
 var rate = "";
 
 
-$("#submit-bid").on("click", function (event) {
-    event.preventDefault();
 
+
+
+
+
+
+$("#add-train-submit").on("click", function (event) {
+    event.preventDefault();
+    
     var trainName = $("#name-input").val().trim();
     var destination = $("#destination-input").val().trim();
     var firstTime = $("#time-input").val().trim();
     var frequency = $("#frequency-input").val().trim();
-
+    
     datebase.ref().push({
         name: trainName,
         location: destination,
         time: firstTime,
         rate: frequency,
         dateAdded: firebase.database.ServerValue.TIMESTAMP
-
+        
     });
-
-
+    
+    
 });
 
 database.ref().on("child_added", function (childSnapshot) {
-
+    
     console.log(childSnapshot.val());
+    
+    var trainName = childSnapshot.val().name;
+    var trainLocation = childSnapshot.val().location;
+    var trainTime = childSnapshot.val().time;
+    var trainRate = childSnapshot.val().rate;
+    
+    
+    console.log(trainName);
+    console.log(trainLocation);
+    console.log(trainTime);
+    console.log(trainRate);
+    
+    var tFrequency = "";
+    
+    
+    var firstTime = "";
+    
+    
+    var firstTimeConverted = moment(firstTime, "HH:mm").subtract(1, "years");
+    console.log(firstTimeConverted);
+    
+    
+    var currentTime = moment();
+    console.log("CURRENT TIME: " + moment(currentTime).format("hh:mm"));
+    
+    
+    var diffTime = moment().diff(moment(firstTimeConverted), "minutes");
+    console.log("DIFFERENCE IN TIME: " + diffTime);
+    
+    
+    var tRemainder = diffTime % tFrequency;
+    console.log(tRemainder);
+    
+    
+    var tMinutesTillTrain = tFrequency - tRemainder;
+    console.log("MINUTES TILL TRAIN: " + tMinutesTillTrain);
+    
+    
+    var nextTrain = moment().add(tMinutesTillTrain, "minutes");
 
-    $("#train-list").append("<div class='well'><span class='train-name'> " +
-        childSnapshot.val().trainName +
-        " </span><span class='train-destination'> " + childSnapshot.val().destination +
-        " </span><span class='train-time'> " + childSnapshot.val().firstTime +
-        " </span><span class='train-rate'> " + childSnapshot.val().frequency +
-        " </span></div>");
 
+    var newRow = $("<tr>").append(
 
+        $("<td>").text(trainName),
+        $("<td>").text(trainLocation),
+        $("<td>").text(trainRate),
+        $("<td>").text(tRemainder),
+        $("<td>").text(nextTrain)
+        
+    );
+
+        $("#train-list > tbody").append(newRow);
 
 }, function (errorObject) {
     console.log("The read failed: " + errorObject.code);
