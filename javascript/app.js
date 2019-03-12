@@ -1,15 +1,16 @@
 
 $(document).ready(function () {
-
+    console.log('loaded')
 
     var config = {
-        apiKey: "AIzaSyCouVSJHZiV-D3hr4YdXDlMxbngS2-dhd8",
+        myKey: "AIzaSyCouVSJHZiV-D3hr4YdXDlMxbngS2-dhd8",
         authDomain: "train-project-7c3fd.firebaseapp.com",
         databaseURL: "https://train-project-7c3fd.firebaseio.com",
         projectId: "train-project-7c3fd",
         storageBucket: "train-project-7c3fd.appspot.com",
         messagingSenderId: "343762643008"
     };
+   
     firebase.initializeApp(config);
 
 
@@ -17,11 +18,16 @@ $(document).ready(function () {
 
     var database = firebase.database();
 
+   
+
+
 
 
 
 
     $("#add-train-submit").on("click", function (event) {
+        console.log('pressed');
+        
         event.preventDefault();
 
         var trainName = $("#trainName").val().trim();
@@ -29,13 +35,12 @@ $(document).ready(function () {
         var firstTime = moment($("#trainTime").val().trim(), "HH:mm").subtract(10, "years").format("X");
         var trainRate = $("#trainFrequency").val().trim();
 
-        datebase.ref().push({
+        database.ref().push({
             name: trainName,
             location: trainLocation,
             time: firstTime,
             rate: trainRate,
             dateAdded: firebase.database.ServerValue.TIMESTAMP
-
         });
 
 
@@ -73,7 +78,7 @@ $(document).ready(function () {
             
             $("<td>").text(trainName),
             $("<td>").text(trainLocation),
-            $("<td>").text(trainRate + "mins"),
+            $("<td>").text(trainRate + " mins"),
             $("<td>").text(tRemainder),
             $("<td>").text(catchTrain)
             
